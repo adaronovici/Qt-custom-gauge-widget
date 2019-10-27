@@ -160,12 +160,23 @@ public:
     void draw(QPainter*);
     void addColor(float position, const QColor& color);
     void clearrColors();
+    void setDynamic(bool b);
+    void setDynamicColors(const QColor &regColor, const QColor &warnColor);
+    void setWarningValue(float value);
+    void setCurrentValue(float value);
 
 
 private:
     QPen mPen;
     QList<QPair<float,QColor> > mColors;
     QLinearGradient mLinearGrad;
+    bool mDynamic;
+    float mWarningValue;
+    float mCurrentValue;
+    QColor mWarningColorFill;
+    QColor mRegularColorFill;
+
+
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -219,9 +230,11 @@ public:
     explicit QcArcItem(QObject *parent = 0);
     void draw(QPainter*);
     void setColor(const QColor& color);
+    void setWidth(float width);
 
 private:
     QColor mColor;
+    float mWidth;
 
 signals:
 
@@ -328,11 +341,20 @@ public:
     void setColor(const QColor& color);
     void setFont(QString font);
     void setFontSize(float value);
+    void setDynamic(bool b);
+    void setColorUnlit(const QColor& color);
+    void setColorLit(const QColor& color);
+    void setCurrentValue(float value);
 private:
     QString mfont;
     float mFontSize; //given as a value from 0 to 1 which represents percentage of radius
     float mStep;
     QColor mColor;
+    bool mDynamic;
+    QColor mColorUnlit;
+    QColor mColorLit;
+    float mCurrentValue;
+
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////

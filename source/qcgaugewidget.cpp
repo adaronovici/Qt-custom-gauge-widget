@@ -313,6 +313,8 @@ QcBackgroundItem::QcBackgroundItem(QObject *parent) :
     setPosition(88);
     mPen = Qt::NoPen;
     setPosition(88);
+    mDynamic = false;
+    mCurrentValue = 0;
 
     addColor(0.4,Qt::darkGray);
     addColor(0.8,Qt::black);
@@ -322,8 +324,11 @@ QcBackgroundItem::QcBackgroundItem(QObject *parent) :
 
 void QcBackgroundItem::draw(QPainter* painter)
 {
+
     QRectF tmpRect = resetRect();
     painter->setBrush(Qt::NoBrush);
+
+    if(!mDynamic){
     QLinearGradient linearGrad(tmpRect.topLeft(), tmpRect.bottomRight());
     for(int i = 0;i<mColors.size();i++){
         linearGrad.setColorAt(mColors[i].first,mColors[i].second);
@@ -331,6 +336,21 @@ void QcBackgroundItem::draw(QPainter* painter)
     painter->setPen(mPen);
     painter->setBrush(linearGrad);
     painter->drawEllipse(adjustRect(position()));
+    }
+    else{
+        if (mCurrentValue>mWarningValue){
+            painter->setBrush(mWarningColorFill);
+
+
+        }
+        else {
+            painter->setBrush(mRegularColorFill);
+        }
+        painter->setPen(mPen);
+        painter->drawEllipse(adjustRect(position()));
+    }
+
+
 }
 
 void QcBackgroundItem::addColor(float position, const QColor &color)
@@ -347,6 +367,24 @@ void QcBackgroundItem::addColor(float position, const QColor &color)
 void QcBackgroundItem::clearrColors()
 {
     mColors.clear();
+}
+void QcBackgroundItem::setWarningValue(float value){
+    mWarningValue=value;
+}
+void QcBackgroundItem::setDynamic(bool b){
+    mCurrentValue = 0;
+    mDynamic = b;
+}
+void QcBackgroundItem::setDynamicColors(const QColor &regColor,const QColor &warnColor){
+    mColors.clear();
+    mRegularColorFill = regColor;
+    mWarningColorFill = warnColor;
+    update();
+}
+
+void QcBackgroundItem::setCurrentValue(float value){
+    mCurrentValue = value;
+    update();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -402,7 +440,7 @@ void QcLabelItem::draw(QPainter *painter)
     resetRect();
     QRectF tmpRect = adjustRect(position());
     float r = getRadius(rect());
-    QFont font(mFont, r * mFontSize, QFont::Bold);
+    QFont font(mFont, r * mFontSize);
     painter->setFont(font);
     painter->setPen(QPen(mColor));
 
@@ -470,6 +508,7 @@ QcArcItem::QcArcItem(QObject *parent) :
 {
     setPosition(80);
     mColor = Qt::black;
+    mWidth = 0.025;
 }
 
 void QcArcItem::draw(QPainter *painter)
@@ -480,7 +519,7 @@ void QcArcItem::draw(QPainter *painter)
 
     QPen pen;
     pen.setColor(mColor);
-    pen.setWidthF(r/40);
+    pen.setWidthF(r*mWidth);
     painter->setPen(pen);
     painter->drawArc(tmpRect,-16*(mMinDegree+180),-16*(mMaxDegree-mMinDegree));
 }
@@ -488,6 +527,11 @@ void QcArcItem::draw(QPainter *painter)
 void QcArcItem::setColor(const QColor &color)
 {
     mColor = color;
+    update();
+}
+void QcArcItem::setWidth(float width){
+    mWidth = width;
+    update();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -612,7 +656,7 @@ void QcColorBand::setDynamic(bool b){
     update();
 }
 
-void QcColorBand::setCurrentValue(float value){
+void QcColorBand::setCurrentValue(float value){ //takes percentages (NOT ACTUAL VALUES)
     mCurrentValue = value;
     setDynamic(true);
 }
@@ -714,6 +758,8 @@ void QcDegreesItem::setWidth(float width){
     update();
 }
 
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -770,7 +816,7 @@ void QcNeedleItem::draw(QPainter *painter)
     painter->restore();
 }
 
-void QcNeedleItem::setCurrentValue(float value)
+void QcNeedleItem::setCurrentValue(float value) //takes actual number values (NOT PERCENTAGES)
 {
        if(value<mMinValue)
         mCurrentValue = mMinValue;
@@ -780,7 +826,7 @@ void QcNeedleItem::setCurrentValue(float value)
         mCurrentValue = value;
 
     if(mLabel!=0)
-        mLabel->setText(QString::number(mCurrentValue),false);
+        mLabel->setText(QString::number((int) mCurrentValue),false);
 
 /// This pull request is not working properly
 //    if(mLabel!=0){
@@ -897,6 +943,11 @@ QcValuesItem::QcValuesItem(QObject *parent) :
     mStep = 10;
     mfont = "Meiryo UI";
     mFontSize = 0.08;
+    mDynamic = false;
+    QColor c = Qt::lightGray;
+    mColorLit = c;
+    mColorUnlit = c.darker();
+
 }
 
 
@@ -904,11 +955,12 @@ void QcValuesItem::draw(QPainter*painter)
 {
     QRectF  tmpRect = resetRect();
     float r = getRadius(adjustRect(99));
-    QFont font(mfont,0, QFont::Bold);
+    QFont font(mfont,0);
     font.setPointSizeF(mFontSize*r);
 
     painter->setFont(font);
     painter->setPen(mColor);
+    if (not mDynamic){
     for(float val = mMinValue;val<=mMaxValue;val+=mStep){
         float deg = getDegFromValue(val);
         QPointF pt = getPoint(deg,tmpRect);
@@ -923,6 +975,45 @@ void QcValuesItem::draw(QPainter*painter)
         txtRect.moveCenter(textCenter);
 
         painter->drawText( txtRect, Qt::TextSingleLine, strVal );
+    }
+    }
+
+    else{
+        painter->setPen(mColorLit);
+        for(float val = mMinValue;val<=mCurrentValue;val+=mStep){
+            float deg = getDegFromValue(val);
+            QPointF pt = getPoint(deg,tmpRect);
+            QPainterPath path;
+            path.moveTo(pt);
+            path.lineTo(    tmpRect.center());
+            QString strVal = QString::number(val);
+            QFontMetrics fMetrics = painter->fontMetrics();
+            QSize sz = fMetrics.size( Qt::TextSingleLine, strVal );
+            QRectF txtRect(QPointF(0,0), sz );
+            QPointF textCenter = path.pointAtPercent(1.0-position()/100.0);
+            txtRect.moveCenter(textCenter);
+
+            painter->drawText( txtRect, Qt::TextSingleLine, strVal );
+        }
+        painter->setPen(mColorUnlit);
+        int newStartValue = (int) mCurrentValue + ((int) mStep - ((int) (mCurrentValue)) % ((int) mStep));
+        for(float val = newStartValue ;val<=mMaxValue;val+=mStep){
+            float deg = getDegFromValue(val);
+            QPointF pt = getPoint(deg,tmpRect);
+            QPainterPath path;
+            path.moveTo(pt);
+            path.lineTo(    tmpRect.center());
+            QString strVal = QString::number(val);
+            QFontMetrics fMetrics = painter->fontMetrics();
+            QSize sz = fMetrics.size( Qt::TextSingleLine, strVal );
+            QRectF txtRect(QPointF(0,0), sz );
+            QPointF textCenter = path.pointAtPercent(1.0-position()/100.0);
+            txtRect.moveCenter(textCenter);
+
+            painter->drawText( txtRect, Qt::TextSingleLine, strVal );
+        }
+
+
     }
 }
 
@@ -951,6 +1042,35 @@ void QcValuesItem::setFontSize(float value){
         mFontSize = value;
     }
 
+}
+
+void QcValuesItem::setDynamic(bool b){
+    mDynamic = b;
+
+    update();
+}
+
+void QcValuesItem::setColorLit(const QColor &color){
+    mColorLit = color;
+    update();
+}
+
+void QcValuesItem::setColorUnlit(const QColor &color){
+    mColorUnlit = color;
+    update();
+}
+void QcValuesItem::setCurrentValue(float value){ //takes actual number values (NOT PERCENTAGES)
+    if (value > mMaxValue){
+        mCurrentValue = mMaxValue;
+    }
+    else if (value < mMinValue){
+        mCurrentValue = mMinValue;
+    }
+    else{
+        mCurrentValue = value;
+    }
+
+    update();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,8 @@
 
 #include <QMainWindow>
 #include "../../source/qcgaugewidget.h"
+#include "../../source/qcthemeitem.h"
+#include <QDebug>
 
 namespace Ui {
 class MainWindow;
@@ -50,9 +52,19 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+
     QcGaugeWidget * mSpeedGauge;
-    QcNeedleItem *mSpeedNeedle;
+    QcNeedleItem * mSpeedNeedle;
     QcColorBand * mDynamicColorBand;
+    QcColorBand * mDynamicColorBandDegrees;
+    QcValuesItem * lightUpValues;
+    QcBackgroundItem * mainBackground;
+    QcBackgroundItem * needleCover;
+    QcGaugeWidget * mSpeedGauge1;
+    QcNeedleItem * mSpeedNeedle1;
+    QcColorBand * mDynamicColorBand1;
+    int maxSpeed;
+
 };
 
 #endif // MAINWINDOW_H
