@@ -5,12 +5,17 @@ QcThemeItem::QcThemeItem(){
     font = "Aero";
     mainColor =  QColor("#6FC3DF");
     warningColor = QColor("#921111");
+    noWarningColor = QColor("#14ff65");
+    mediumWarningColor = QColor("#FFE64D");
+    highWarningColor = QColor("#FF7D7D");
     backgroundColor = Qt::black;
+    valuesRadius = 79;
     fontSizeValues = 0.075;
     fontSizeLabel = 0.09;
     fontSizeNeedleLabel = 0.12;
     fontSizeUnits = 0.055;
     needleRadius = 65;
+    needleCoverRadius = 25;
     outerRingRadius = 99;
     mainBackgroundRadius = 97;
     arcRadius  = 51;
@@ -65,11 +70,23 @@ QcThemeItem::QcThemeItem(QString directory, QString fileName)
                 else if (first == "warningColor"){
                     warningColor = QColor(second);
                 }
+                else if (first == "noWarningColor"){
+                    noWarningColor = QColor(second);
+                }
+                else if (first == "mediumWarningColor"){
+                    mediumWarningColor = QColor(second);
+                }
+                else if (first == "highWarningColor"){
+                    highWarningColor = QColor(second);
+                }
                 else if (first == "backgroundColor"){
                     backgroundColor = QColor(second);
                 }
                 else if (first == "fontSizeValues"){
                     fontSizeValues = second.toDouble();
+                }
+                else if (first == "valuesRadius"){
+                    valuesRadius = second.toDouble();
                 }
                 else if (first == "fontSizeLabel"){
                     fontSizeLabel = second.toDouble();
@@ -82,6 +99,9 @@ QcThemeItem::QcThemeItem(QString directory, QString fileName)
                 }
                 else if (first == "needleRadius"){
                     needleRadius = second.toDouble();
+                }
+                else if (first == "needleCoverRadius"){
+                    needleCoverRadius = second.toDouble();
                 }
                 else if (first == "outerRingRadius"){
                     outerRingRadius = second.toDouble();

@@ -20,13 +20,17 @@ public:
     QString font;
     QColor mainColor;
     QColor mediumWarningColor;
+    QColor noWarningColor;
+    QColor highWarningColor;
     QColor warningColor;
     QColor backgroundColor;
     double fontSizeValues;
+    double valuesRadius;
     double fontSizeLabel;
     double fontSizeNeedleLabel;
     double fontSizeUnits;
     double needleRadius;
+    double needleCoverRadius;
     double outerRingRadius;
     double mainBackgroundRadius;
     double arcRadius;

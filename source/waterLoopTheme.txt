@@ -2,3 +2,28 @@
 //Each line must contain two words, a theme characteristic and a valid value
 //Start of theme
 font Aero
+mainColor #6FC3DF
+warningColor #921111
+noWarningColor #14ff65
+mediumWarningColor #FFE64D
+highWarningColor #FF7D7D
+backgroundColor Qt::black
+valuesRadius 79
+fontSizeValues 0.075
+fontSizeLabel 0.09
+fontSizeNeedleLabel 0.12
+fontSizeUnits 0.055
+needleRadius 65
+needleCoverRadius 25
+outerRingRadius 99
+mainBackgroundRadius 97
+arcRadius 51
+arcWidth 0.025
+colorBandRadius 44
+colorBandWidth 0.1
+mainDegreesRadius 58
+subDegreesRadius 58
+mainDegreesWidth 0.05
+subDegreesWidth 0.01
+mainDegreesLength 0.1
+subDegreesLength 0.05

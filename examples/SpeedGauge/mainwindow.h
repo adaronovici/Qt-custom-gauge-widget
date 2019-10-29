@@ -32,6 +32,7 @@
 #include <QMainWindow>
 #include "../../source/qcgaugewidget.h"
 #include "../../source/qcthemeitem.h"
+#include "../../source/waterLoopGaugeItem.h"
 #include <QDebug>
 
 namespace Ui {
@@ -51,7 +52,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-
+    waterLoopGaugeItem * speedometer;
 
     QcGaugeWidget * mSpeedGauge;
     QcNeedleItem * mSpeedNeedle;
@@ -64,6 +65,8 @@ private:
     QcNeedleItem * mSpeedNeedle1;
     QcColorBand * mDynamicColorBand1;
     int maxSpeed;
+
+
 
 };
 
