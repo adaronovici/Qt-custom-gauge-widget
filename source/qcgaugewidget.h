@@ -259,6 +259,7 @@ public:
     void setOpacity(float value); //from 0 to 1
     void setCoveringColor(QColor c);
 
+
 private:
    QPainterPath createSubBand(float from,float sweep);
    QList<QPair<QColor,float> > mBandColors;
@@ -268,6 +269,7 @@ private:
    QColor mCoveringColor; //sets the color which will cover the other color band
    bool mdynamic;
    float mCurrentValue; //percentage (from 0 to 100) of the gauge
+
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////

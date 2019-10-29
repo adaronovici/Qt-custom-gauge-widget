@@ -7,7 +7,7 @@ warningColor #921111
 noWarningColor #14ff65
 mediumWarningColor #FFE64D
 highWarningColor #FF7D7D
-backgroundColor Qt::black
+backgroundColor #000000
 valuesRadius 79
 fontSizeValues 0.075
 fontSizeLabel 0.09

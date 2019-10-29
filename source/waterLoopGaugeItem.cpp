@@ -35,7 +35,7 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     majDeg->setLength(theme.mainDegreesLength);
 
     QcDegreesItem * deg = mainGauge->addDegrees(theme.subDegreesRadius);
-    deg->setStep(floor(stepSize/10));
+    deg->setStep(stepSize/10.0);
     deg->setValueRange(0,maxValue);
     deg->setWidth(theme.subDegreesWidth);
     deg->setLength(theme.subDegreesLength);
@@ -47,12 +47,11 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     QList<QPair<QColor,float>> lst;
 
     pair.first = QColor(theme.noWarningColor);
-    pair.second = 100*warningValueMed/maxValue;
+    pair.second = 100* warningValueMed/maxValue;
     lst.append(pair);
 
-
     pair.first = QColor(theme.mediumWarningColor);
-    pair.second = 100*warningValueHigh/maxValue;
+    pair.second = 100 * warningValueHigh/maxValue;
     lst.append(pair);
 
     pair.first = QColor(theme.highWarningColor);

@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 #include "qcgaugewidget.h"
+#include <QDebug>
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -562,6 +563,7 @@ QcColorBand::QcColorBand(QObject *parent) :
     mCoveringColor = Qt::darkGray;
     mOpacity = 0.9;
 
+
     setPosition(50);
 }
 
@@ -613,7 +615,6 @@ void QcColorBand::setWidth(float width){
 void QcColorBand::setDynamic(bool b){
     mdynamic = b;
     if (b){
-
         mBandColors.clear();
         QPair<QColor,float> pair;
         pair.first = Qt::transparent;
@@ -677,6 +678,7 @@ void QcColorBand::setOpacity(float value){
     }
     setDynamic(true);
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -825,9 +827,17 @@ void QcNeedleItem::setCurrentValue(float value) //takes actual number values (NO
     else
         mCurrentValue = value;
 
-    if(mLabel!=0)
-        mLabel->setText(QString::number((int) mCurrentValue),false);
-
+    if(mLabel!=0){
+        if (mCurrentValue>1){
+            mLabel->setText(QString::number((int) mCurrentValue));
+        }
+        else{
+        QString tempTxt = QString::number(mCurrentValue);
+        tempTxt.truncate(4);
+        mLabel->setText(tempTxt,false);
+        tempTxt.clear();
+        }
+    }
 /// This pull request is not working properly
 //    if(mLabel!=0){
 //        QString currentValue;
@@ -980,7 +990,7 @@ void QcValuesItem::draw(QPainter*painter)
 
     else{
         painter->setPen(mColorLit);
-        for(float val = mMinValue;val<=mCurrentValue;val+=mStep){
+        for(float val = mMinValue;val<=mCurrentValue+0.0001;val+=mStep){
             float deg = getDegFromValue(val);
             QPointF pt = getPoint(deg,tmpRect);
             QPainterPath path;
@@ -996,8 +1006,10 @@ void QcValuesItem::draw(QPainter*painter)
             painter->drawText( txtRect, Qt::TextSingleLine, strVal );
         }
         painter->setPen(mColorUnlit);
-        int newStartValue = (int) mCurrentValue + ((int) mStep - ((int) (mCurrentValue)) % ((int) mStep));
-        for(float val = newStartValue ;val<=mMaxValue;val+=mStep){
+        float newStartValue = ((float)((int) (100*mCurrentValue))/100) + (mStep - (float)((int) (100*(mCurrentValue)) % (int) (100*mStep))/100);
+
+        for(float val = newStartValue;val<=mMaxValue+0.001;val+=mStep){
+
             float deg = getDegFromValue(val);
             QPointF pt = getPoint(deg,tmpRect);
             QPainterPath path;

@@ -37,8 +37,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     QcThemeItem mainTheme = QcThemeItem("D:/Coding/Workspaces/WaterLoop/qT/Development/Qt-custom-gauge-widget/source","waterLoopTheme.txt");
-    speedometer = new waterLoopGaugeItem(mainTheme,"Speedometer","SPEED","Km/h",400,300,200,40);
-    ui->verticalLayout->addWidget(speedometer->getGauge());
+    speedoMeter = new waterLoopGaugeItem(mainTheme,"Speedometer","SPEED","Km/h",400,300,200,40);
+    voltMeter = new waterLoopGaugeItem(mainTheme,"Voltmeter","VOTLS","V",1,0.5,0.25,0.1);
+    ui->verticalLayout->addWidget(speedoMeter->getGauge());
+    ui->verticalLayout->addWidget(voltMeter->getGauge());
 
 }
 
@@ -49,5 +51,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
-    speedometer->setCurrentValue(value);
+    speedoMeter->setCurrentValue(value);
+    voltMeter->setCurrentValue(value);
 }

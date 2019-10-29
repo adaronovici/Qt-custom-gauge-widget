@@ -52,18 +52,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    waterLoopGaugeItem * speedometer;
-
-    QcGaugeWidget * mSpeedGauge;
-    QcNeedleItem * mSpeedNeedle;
-    QcColorBand * mDynamicColorBand;
-    QcColorBand * mDynamicColorBandDegrees;
-    QcValuesItem * lightUpValues;
-    QcBackgroundItem * mainBackground;
-    QcBackgroundItem * needleCover;
-    QcGaugeWidget * mSpeedGauge1;
-    QcNeedleItem * mSpeedNeedle1;
-    QcColorBand * mDynamicColorBand1;
+    waterLoopGaugeItem * speedoMeter;
+    waterLoopGaugeItem * voltMeter;
     int maxSpeed;
 
 
