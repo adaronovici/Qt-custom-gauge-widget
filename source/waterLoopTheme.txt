@@ -27,3 +27,12 @@ mainDegreesWidth 0.05
 subDegreesWidth 0.01
 mainDegreesLength 0.1
 subDegreesLength 0.05
+needleVisible true
+minDegree -90
+maxDegree 180
+dropShadow true
+dropShadowRadius 30
+dropShadowColor #808080
+dropShadowAlpha 0.8
+dropShadowHorOffset 20 ;;negative values are to the left
+dropShadowVertOffset 2 ;;negative values are up

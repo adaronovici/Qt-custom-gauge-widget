@@ -24,25 +24,34 @@ public:
     QColor highWarningColor;
     QColor warningColor;
     QColor backgroundColor;
-    double fontSizeValues;
-    double valuesRadius;
-    double fontSizeLabel;
-    double fontSizeNeedleLabel;
-    double fontSizeUnits;
-    double needleRadius;
-    double needleCoverRadius;
-    double outerRingRadius;
-    double mainBackgroundRadius;
-    double arcRadius;
-    double arcWidth;
-    double colorBandRadius;
-    double colorBandWidth;
-    double mainDegreesRadius;
-    double subDegreesRadius;
-    double mainDegreesWidth;
-    double subDegreesWidth;
-    double mainDegreesLength;
-    double subDegreesLength;
+    qreal fontSizeValues;
+    qreal valuesRadius;
+    qreal fontSizeLabel;
+    qreal fontSizeNeedleLabel;
+    qreal fontSizeUnits;
+    qreal needleRadius;
+    qreal needleCoverRadius;
+    qreal outerRingRadius;
+    qreal mainBackgroundRadius;
+    qreal arcRadius;
+    qreal arcWidth;
+    qreal colorBandRadius;
+    qreal colorBandWidth;
+    qreal mainDegreesRadius;
+    qreal subDegreesRadius;
+    qreal mainDegreesWidth;
+    qreal subDegreesWidth;
+    qreal mainDegreesLength;
+    qreal subDegreesLength;
+    bool needleVisible;
+    qreal minDegree;
+    qreal maxDegree;
+    bool dropShadow;
+    qreal dropShadowRadius = 25;
+    QColor dropShadowColor = QColor(0,0,0,40);
+    qreal dropShadowAlpha = 0.4; //from 0 to 1
+    qreal dropShadowHorOffset = 1; //negative values are to the left
+    qreal dropShadowVertOffset = 2; //negative values are up
 
 };
 #endif // QCTHEMEITEM_H

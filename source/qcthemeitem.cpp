@@ -28,6 +28,10 @@ QcThemeItem::QcThemeItem(){
     subDegreesWidth = 0.01;
     mainDegreesLength = 0.1;
     subDegreesLength = 0.05;
+    needleVisible = true;
+    minDegree = -45;
+    maxDegree = 225;
+    dropShadow = false;
 }
 
 QcThemeItem::QcThemeItem(QString directory, QString fileName)
@@ -83,62 +87,103 @@ QcThemeItem::QcThemeItem(QString directory, QString fileName)
                     backgroundColor = QColor(second);
                 }
                 else if (first == "fontSizeValues"){
-                    fontSizeValues = second.toDouble();
+                    fontSizeValues = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "valuesRadius"){
-                    valuesRadius = second.toDouble();
+                    valuesRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "fontSizeLabel"){
-                    fontSizeLabel = second.toDouble();
+                    fontSizeLabel = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "fontSizeNeedleLabel"){
-                    fontSizeNeedleLabel = second.toDouble();
+                    fontSizeNeedleLabel = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "fontSizeUnits"){
-                    fontSizeUnits = second.toDouble();
+                    fontSizeUnits = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "needleRadius"){
-                    needleRadius = second.toDouble();
+                    needleRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "needleCoverRadius"){
-                    needleCoverRadius = second.toDouble();
+                    needleCoverRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "outerRingRadius"){
-                    outerRingRadius = second.toDouble();
+                    outerRingRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "mainBackgroundRadius"){
-                    mainBackgroundRadius = second.toDouble();
+                    mainBackgroundRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "arcRadius"){
-                    arcRadius = second.toDouble();
+                    arcRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "arcWidth"){
-                    arcWidth = second.toDouble();
+                    arcWidth = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "colorBandRadius"){
-                    colorBandRadius = second.toDouble();
+                    colorBandRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "colorBandWidth"){
-                    colorBandWidth = second.toDouble();
+                    colorBandWidth = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "mainDegreesRadius"){
-                    mainDegreesRadius = second.toDouble();
+                    mainDegreesRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "subDegreesRadius"){
-                    subDegreesRadius = second.toDouble();
+                    subDegreesRadius = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "mainDegreesWidth"){
-                    mainDegreesWidth = second.toDouble();
+                    mainDegreesWidth = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "subDegreesWidth"){
-                    subDegreesWidth = second.toDouble();
+                    subDegreesWidth = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "mainDegreesLength"){
-                    mainDegreesLength = second.toDouble();
+                    mainDegreesLength = static_cast<qreal>(second.toDouble());
                 }
                 else if (first == "subDegreesLength"){
-                    subDegreesLength = second.toDouble();
+                    subDegreesLength = static_cast<qreal>(second.toDouble());
                 }
+                else if (first == "needleVisible"){
+                    if (second == "false"){
+                        needleVisible = false;
+                    }
+                    else {
+                        needleVisible = true;
+                    }
+                }
+                else if (first == "minDegree"){
+                    minDegree = static_cast<qreal>(second.toDouble());
+                }
+                else if (first == "maxDegree"){
+                    maxDegree = static_cast<qreal>(second.toDouble());
+                }
+                else if (first == "dropShadow"){
+                    if (second == "false"){
+                        dropShadow = false;
+                    }
+                    else {
+                        dropShadow = true;
+                    }
+                }
+                if (dropShadow){
+                    if (first == "dropShadowRadius"){
+                        dropShadowRadius = static_cast<qreal>(second.toDouble());
+                    }
+                    else if (first == "dropShadowColor"){
+                        dropShadowColor = QColor(second);
+                    }
+                    else if (first == "dropShadowAlpha"){
+                        dropShadowAlpha = static_cast<qreal>(second.toDouble());
+                        dropShadowColor.setAlphaF(dropShadowAlpha);
+                    }
+                    else if (first == "dropShadowHorOffset"){
+                        dropShadowHorOffset = static_cast<qreal>(second.toDouble());
+                    }
+                    else if (first == "dropShadowVertOffset"){
+                        dropShadowVertOffset =static_cast<qreal>(second.toDouble());
+                    }
+                }
+
             }
         }
     }

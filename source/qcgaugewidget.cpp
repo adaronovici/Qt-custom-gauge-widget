@@ -39,7 +39,7 @@ QcGaugeWidget::QcGaugeWidget(QWidget *parent) :
     setMinimumSize(250,250);
 }
 
-QcBackgroundItem *QcGaugeWidget::addBackground(float position)
+QcBackgroundItem *QcGaugeWidget::addBackground(qreal position)
 {
     QcBackgroundItem * item = new QcBackgroundItem(this);
     item->setPosition(position);
@@ -47,7 +47,7 @@ QcBackgroundItem *QcGaugeWidget::addBackground(float position)
     return item;
 }
 
-QcDegreesItem *QcGaugeWidget::addDegrees(float position)
+QcDegreesItem *QcGaugeWidget::addDegrees(qreal position)
 {
     QcDegreesItem * item = new QcDegreesItem(this);
     item->setPosition(position);
@@ -57,7 +57,7 @@ QcDegreesItem *QcGaugeWidget::addDegrees(float position)
 }
 
 
-QcValuesItem *QcGaugeWidget::addValues(float position)
+QcValuesItem *QcGaugeWidget::addValues(qreal position)
 {
     QcValuesItem * item = new QcValuesItem(this);
     item->setPosition(position);
@@ -65,7 +65,7 @@ QcValuesItem *QcGaugeWidget::addValues(float position)
     return item;
 }
 
-QcArcItem *QcGaugeWidget::addArc(float position)
+QcArcItem *QcGaugeWidget::addArc(qreal position)
 {
     QcArcItem * item = new QcArcItem(this);
     item->setPosition(position);
@@ -73,7 +73,7 @@ QcArcItem *QcGaugeWidget::addArc(float position)
     return item;
 }
 
-QcColorBand *QcGaugeWidget::addColorBand(float position)
+QcColorBand *QcGaugeWidget::addColorBand(qreal position)
 {
     QcColorBand * item = new QcColorBand(this);
     item->setPosition(position);
@@ -81,7 +81,14 @@ QcColorBand *QcGaugeWidget::addColorBand(float position)
     return item;
 }
 
-QcNeedleItem *QcGaugeWidget::addNeedle(float position)
+QcDynamicArcItem *QcGaugeWidget::addDynamicArc(qreal position) {
+    QcDynamicArcItem *item = new QcDynamicArcItem(this);
+    item->setPosition(position);
+    mItems.append(item);
+    return item;
+}
+
+QcNeedleItem *QcGaugeWidget::addNeedle(qreal position)
 {
     QcNeedleItem * item = new QcNeedleItem(this);
     item->setPosition(position);
@@ -89,7 +96,7 @@ QcNeedleItem *QcGaugeWidget::addNeedle(float position)
     return item;
 }
 
-QcLabelItem *QcGaugeWidget::addLabel(float position)
+QcLabelItem *QcGaugeWidget::addLabel(qreal position)
 {
     QcLabelItem * item = new QcLabelItem(this);
     item->setPosition(position);
@@ -97,7 +104,7 @@ QcLabelItem *QcGaugeWidget::addLabel(float position)
     return item;
 }
 
-QcGlassItem *QcGaugeWidget::addGlass(float position)
+QcGlassItem *QcGaugeWidget::addGlass(qreal position)
 {
     QcGlassItem * item = new QcGlassItem(this);
     item->setPosition(position);
@@ -105,7 +112,7 @@ QcGlassItem *QcGaugeWidget::addGlass(float position)
     return item;
 }
 
-QcAttitudeMeter *QcGaugeWidget::addAttitudeMeter(float position)
+QcAttitudeMeter *QcGaugeWidget::addAttitudeMeter(qreal position)
 {
     QcAttitudeMeter * item = new QcAttitudeMeter(this);
     item->setPosition(position);
@@ -113,7 +120,7 @@ QcAttitudeMeter *QcGaugeWidget::addAttitudeMeter(float position)
     return item;
 }
 
-void QcGaugeWidget::addItem(QcItem *item,float position)
+void QcGaugeWidget::addItem(QcItem *item,qreal position)
 {
     // takes parentship of the item
     item->setParent(this);
@@ -163,7 +170,7 @@ void QcItem::update()
     parentWidget->update();
 }
 
-float QcItem::position()
+qreal QcItem::position()
 {
     return mPosition;
 }
@@ -173,7 +180,7 @@ QRectF QcItem::rect()
     return mRect;
 }
 
-void QcItem::setPosition(float position)
+void QcItem::setPosition(qreal position)
 {
     if(position>100)
         mPosition = 100;
@@ -184,17 +191,17 @@ void QcItem::setPosition(float position)
     update();
 }
 
-QRectF QcItem::adjustRect(float percentage)
+QRectF QcItem::adjustRect(qreal percentage)
 {
-    float r = getRadius(mRect);
-    float offset =   r-(percentage*r)/100.0;
+    qreal r = getRadius(mRect);
+    qreal offset =   r-(percentage*r)/100.0;
     QRectF tmpRect = mRect.adjusted(offset,offset,-offset,-offset);
     return tmpRect;
 }
 
-float QcItem::getRadius(const QRectF &tmpRect)
+qreal QcItem::getRadius(const QRectF &tmpRect)
 {
-    float r = 0;
+    qreal r = 0;
     if(tmpRect.width()<tmpRect.height())
         r = tmpRect.width()/2.0;
     else
@@ -205,18 +212,18 @@ float QcItem::getRadius(const QRectF &tmpRect)
 QRectF QcItem::resetRect()
 {
     mRect = parentWidget->rect();
-    float r = getRadius(mRect);
+    qreal r = getRadius(mRect);
     mRect.setWidth(2.0*r);
     mRect.setHeight(2.0*r);
     mRect.moveCenter(parentWidget->rect().center());
     return mRect;
 }
 
-QPointF QcItem::getPoint(float deg,const QRectF &tmpRect)
+QPointF QcItem::getPoint(qreal deg,const QRectF &tmpRect)
 {
-    float r = getRadius(tmpRect);
-    float xx=cos(qDegreesToRadians(deg))*r;
-    float yy=sin(qDegreesToRadians(deg))*r;
+    qreal r = getRadius(tmpRect);
+    qreal xx=cos(qDegreesToRadians(deg))*r;
+    qreal yy=sin(qDegreesToRadians(deg))*r;
     QPointF pt;
     xx=tmpRect.center().x()-xx;
     yy=tmpRect.center().y()-yy;
@@ -227,10 +234,10 @@ QPointF QcItem::getPoint(float deg,const QRectF &tmpRect)
 
 
 
-float QcItem::getAngle(const QPointF&pt, const QRectF &tmpRect)
+qreal QcItem::getAngle(const QPointF&pt, const QRectF &tmpRect)
 {
-    float xx=tmpRect.center().x()-pt.x();
-    float yy=tmpRect.center().y()-pt.y();
+    qreal xx=tmpRect.center().x()-pt.x();
+    qreal yy=tmpRect.center().y()-pt.y();
     return qRadiansToDegrees( atan2(yy,xx));
 }
 
@@ -247,7 +254,7 @@ QcScaleItem::QcScaleItem(QObject *parent) :
     mMaxValue = 100;
 }
 
-void QcScaleItem::setValueRange(float minValue, float maxValue)
+void QcScaleItem::setValueRange(qreal minValue, qreal maxValue)
 {
     if(!(minValue<maxValue))
         throw( InvalidValueRange);
@@ -256,7 +263,7 @@ void QcScaleItem::setValueRange(float minValue, float maxValue)
 
 }
 
-void QcScaleItem::setDgereeRange(float minDegree, float maxDegree)
+void QcScaleItem::setDegreeRange(qreal minDegree, qreal maxDegree)
 {
     if(!(minDegree<maxDegree))
         throw( InvalidValueRange);
@@ -264,15 +271,15 @@ void QcScaleItem::setDgereeRange(float minDegree, float maxDegree)
     mMaxDegree = maxDegree;
 }
 
-float QcScaleItem::getDegFromValue(float v)
+qreal QcScaleItem::getDegFromValue(qreal v)
 {
-    float a = (mMaxDegree-mMinDegree)/(mMaxValue-mMinValue);
-    float b = -a*mMinValue+mMinDegree;
+    qreal a = (mMaxDegree-mMinDegree)/(mMaxValue-mMinValue);
+    qreal b = -a*mMinValue+mMinDegree;
     return a*v+b;
 }
 
 
-void QcScaleItem::setMinValue(float minValue)
+void QcScaleItem::setMinValue(qreal minValue)
 {
     if(minValue>mMaxValue)
         throw (InvalidValueRange);
@@ -281,7 +288,7 @@ void QcScaleItem::setMinValue(float minValue)
 }
 
 
-void QcScaleItem::setMaxValue(float maxValue)
+void QcScaleItem::setMaxValue(qreal maxValue)
 {
     if(maxValue<mMinValue )
         throw (InvalidValueRange);
@@ -289,14 +296,14 @@ void QcScaleItem::setMaxValue(float maxValue)
     update();
 }
 
-void QcScaleItem::setMinDegree(float minDegree)
+void QcScaleItem::setMinDegree(qreal minDegree)
 {
     if(minDegree>mMaxDegree)
         throw (InvalidDegreeRange);
     mMinDegree = minDegree;
     update();
 }
-void QcScaleItem::setMaxDegree(float maxDegree)
+void QcScaleItem::setMaxDegree(qreal maxDegree)
 {
     if(maxDegree<mMinDegree)
         throw (InvalidDegreeRange);
@@ -354,11 +361,11 @@ void QcBackgroundItem::draw(QPainter* painter)
 
 }
 
-void QcBackgroundItem::addColor(float position, const QColor &color)
+void QcBackgroundItem::addColor(qreal position, const QColor &color)
 {
     if(position<0||position>1)
         return;
-      QPair<float,QColor> pair;
+      QPair<qreal,QColor> pair;
       pair.first = position;
       pair.second = color;
       mColors.append(pair);
@@ -369,7 +376,7 @@ void QcBackgroundItem::clearrColors()
 {
     mColors.clear();
 }
-void QcBackgroundItem::setWarningValue(float value){
+void QcBackgroundItem::setWarningValue(qreal value){
     mWarningValue=value;
 }
 void QcBackgroundItem::setDynamic(bool b){
@@ -383,7 +390,7 @@ void QcBackgroundItem::setDynamicColors(const QColor &regColor,const QColor &war
     update();
 }
 
-void QcBackgroundItem::setCurrentValue(float value){
+void QcBackgroundItem::setCurrentValue(qreal value){
     mCurrentValue = value;
     update();
 }
@@ -403,7 +410,7 @@ void QcGlassItem::draw(QPainter *painter)
     resetRect();
     QRectF tmpRect1 = adjustRect(position());
     QRectF tmpRect2 = tmpRect1;
-    float r = getRadius(tmpRect1);
+    qreal r = getRadius(tmpRect1);
     tmpRect2.setHeight(r/2.0);
     painter->setPen(Qt::NoPen);
 
@@ -440,7 +447,7 @@ void QcLabelItem::draw(QPainter *painter)
 {
     resetRect();
     QRectF tmpRect = adjustRect(position());
-    float r = getRadius(rect());
+    qreal r = getRadius(rect());
     QFont font(mFont, r * mFontSize);
     painter->setFont(font);
     painter->setPen(QPen(mColor));
@@ -455,13 +462,13 @@ void QcLabelItem::draw(QPainter *painter)
 
 }
 
-void QcLabelItem::setAngle(float a)
+void QcLabelItem::setAngle(qreal a)
 {
     mAngle = a;
     update();
 }
 
-float QcLabelItem::angle()
+qreal QcLabelItem::angle()
 {
     return mAngle;
 }
@@ -494,7 +501,7 @@ void QcLabelItem::setFont(QString str){
     update();
 }
 
-void QcLabelItem::setFontSize(float size){
+void QcLabelItem::setFontSize(qreal size){
     mFontSize = size;
     update();
 }
@@ -507,6 +514,7 @@ void QcLabelItem::setFontSize(float size){
 QcArcItem::QcArcItem(QObject *parent) :
     QcScaleItem(parent)
 {
+
     setPosition(80);
     mColor = Qt::black;
     mWidth = 0.025;
@@ -516,7 +524,7 @@ void QcArcItem::draw(QPainter *painter)
 {
     resetRect();
     QRectF tmpRect= adjustRect(position());
-    float r = getRadius(tmpRect);
+    qreal r = getRadius(tmpRect);
 
     QPen pen;
     pen.setColor(mColor);
@@ -530,10 +538,11 @@ void QcArcItem::setColor(const QColor &color)
     mColor = color;
     update();
 }
-void QcArcItem::setWidth(float width){
+void QcArcItem::setWidth(qreal width){
     mWidth = width;
     update();
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -543,7 +552,7 @@ QcColorBand::QcColorBand(QObject *parent) :
 {
     QColor tmpColor;
     tmpColor.setAlphaF(0.1);
-    QPair<QColor,float> pair;
+    QPair<QColor,qreal> pair;
 
     pair.first = Qt::green;
     pair.second = 10;
@@ -567,7 +576,7 @@ QcColorBand::QcColorBand(QObject *parent) :
     setPosition(50);
 }
 
-QPainterPath QcColorBand::createSubBand(float from, float sweep)
+QPainterPath QcColorBand::createSubBand(qreal from, qreal sweep)
 {
     QRectF tmpRect = adjustRect(position());
     QPainterPath path;
@@ -579,15 +588,15 @@ QPainterPath QcColorBand::createSubBand(float from, float sweep)
 void QcColorBand::draw(QPainter *painter)
 {
     resetRect();
-    float r = getRadius(rect());
+    qreal r = getRadius(rect());
     QPen pen;
     pen.setCapStyle(Qt::FlatCap);
     pen.setWidthF(r * mBandWidth);
     painter->setBrush(Qt::NoBrush);
-    float offset = getDegFromValue(mBandStartValue);
+    qreal offset = getDegFromValue(mBandStartValue);
     for(int i = 0;i<mBandColors.size();i++){
         QColor clr = mBandColors[i].first;
-        float sweep;
+        qreal sweep;
         if(i==0)
             sweep = getDegFromValue(mBandColors[i].second)-getDegFromValue(mMinValue);
         else
@@ -601,13 +610,13 @@ void QcColorBand::draw(QPainter *painter)
         painter->drawPath(path);
     }
 }
-void QcColorBand::setColors(const QList<QPair<QColor, float> > &colors)
+void QcColorBand::setColors(const QList<QPair<QColor, qreal> > &colors)
 {
     mBandColors = colors;
     update();
 }
 
-void QcColorBand::setWidth(float width){
+void QcColorBand::setWidth(qreal width){
     mBandWidth = width;
     update();
 }
@@ -616,7 +625,7 @@ void QcColorBand::setDynamic(bool b){
     mdynamic = b;
     if (b){
         mBandColors.clear();
-        QPair<QColor,float> pair;
+        QPair<QColor,qreal> pair;
         pair.first = Qt::transparent;
         if (mCurrentValue < 100){
             pair.second = mCurrentValue; //value from 0 to 100 (percentage based)
@@ -635,7 +644,7 @@ void QcColorBand::setDynamic(bool b){
     else{
         QColor tmpColor;
         tmpColor.setAlphaF(0.1);
-        QPair<QColor,float> pair;
+        QPair<QColor,qreal> pair;
 
         pair.first = Qt::green;
         pair.second = 10;
@@ -657,7 +666,7 @@ void QcColorBand::setDynamic(bool b){
     update();
 }
 
-void QcColorBand::setCurrentValue(float value){ //takes percentages (NOT ACTUAL VALUES)
+void QcColorBand::setCurrentValue(qreal value){ //takes percentages (NOT ACTUAL VALUES)
     mCurrentValue = value;
     setDynamic(true);
 }
@@ -666,7 +675,7 @@ void QcColorBand::setCoveringColor(QColor c){
     mCoveringColor = c;
     setDynamic(true);
 }
-void QcColorBand::setOpacity(float value){
+void QcColorBand::setOpacity(qreal value){
     if (value > 1){
         mOpacity = 1;
     }
@@ -684,6 +693,96 @@ void QcColorBand::setOpacity(float value){
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+QcDynamicArcItem::QcDynamicArcItem(QObject *parent) : QcScaleItem(parent)
+{
+    setPosition(80);
+    mColor = Qt::black;
+    mWidth = 1;
+    mPercentage = 0;
+}
+
+void QcDynamicArcItem::draw(QPainter *painter) {
+    resetRect();
+    QRectF tmpRect= adjustRect(position());
+    QPen pen;
+    qreal r = getRadius(tmpRect);
+
+    qreal percentage = mPercentage < 0 ? 0 : mPercentage > 1 ? 1 : mPercentage;
+
+    pen.setColor(calculateColor(percentage));
+    pen.setWidthF(r * mWidth);
+    pen.setCapStyle(Qt::RoundCap);
+    painter->setPen(pen);
+    painter->drawArc(tmpRect, static_cast<int>(-16 * (mMinDegree + 180)), static_cast<int>(-16 * (mMaxDegree - mMinDegree) * (percentage)));
+}
+
+void QcDynamicArcItem::setPercentage(const qreal &percent) {
+    this->mPercentage = percent;
+    update();
+}
+
+void QcDynamicArcItem::setColor(const QColor &color) {
+    this->mColor = color;
+    this->usingSingleColor = true;
+    update();
+}
+
+void QcDynamicArcItem::setColor(std::vector<std::pair<qreal, QColor> > colors) {
+    this->mColors = colors;
+
+    std::sort(mColors.begin(), mColors.end(), [](std::pair<qreal, QColor> a, std::pair<qreal, QColor> b) {
+        return a.first < b.first;
+    });
+
+    this->usingSingleColor = false;
+    update();
+}
+
+void QcDynamicArcItem::setWidth(const qreal &width) {
+    this->mWidth = width;
+    update();
+}
+
+QColor QcDynamicArcItem::calculateColor(qreal percentage) {
+    int size = static_cast<int>(mColors.size());
+    if (usingSingleColor || mColors.size() == 0) return mColor;
+
+    int foundIndex = -1;
+    // find the index
+    for (int i = size - 1; i >= 0; i--) {
+        if (mColors[static_cast<ulong>(i)].first < percentage) {
+            foundIndex = i;
+            break;
+        }
+    }
+
+    if (foundIndex == size - 1) return mColors[static_cast<ulong>(size - 1)].second;
+    if (foundIndex == -1) return mColors[0].second;
+    if (foundIndex == 0 && size == 1) return mColors[0].second;
+    // interpolate
+    auto lower = mColors[static_cast<ulong>(foundIndex)];
+    auto upper = mColors[static_cast<ulong>(foundIndex + 1)];
+
+    int a1, b1, c1, a2, b2, c2;
+    lower.second.getHsv(&a1, &b1, &c1);
+    upper.second.getHsv(&a2, &b2, &c2);
+
+    auto relativePercentage = (percentage - lower.first) / (upper.first - lower.first);
+
+    int a3 = a1 + static_cast<int>(relativePercentage * static_cast<qreal>(a2 - a1));
+    int b3 = b1 + static_cast<int>(relativePercentage * static_cast<qreal>(b2 - b1));
+    int c3 = c1 + static_cast<int>(relativePercentage * static_cast<qreal>(c2 - c1));
+
+    QColor final;
+    final.setHsv(a3,b3,c3);
+    return final;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
 QcDegreesItem::QcDegreesItem(QObject *parent) :
     QcScaleItem(parent)
 {
@@ -694,6 +793,7 @@ QcDegreesItem::QcDegreesItem(QObject *parent) :
     mSubDegree = false;
     setPosition(90);
 
+
 }
 
 
@@ -702,10 +802,11 @@ void QcDegreesItem::draw(QPainter *painter)
     resetRect();
     QRectF tmpRect = adjustRect(position());
 
+
     painter->setPen(mColor);
-    float r = getRadius(tmpRect);
-    for(float val = mMinValue;val<=mMaxValue;val+=mStep){
-        float deg = getDegFromValue(val);
+    qreal r = getRadius(tmpRect);
+    for(qreal val = mMinValue;val<=mMaxValue;val+=mStep){
+        qreal deg = getDegFromValue(val);
         QPointF pt = getPoint(deg,tmpRect);
         QPainterPath path;
         path.moveTo(pt);
@@ -724,7 +825,7 @@ void QcDegreesItem::draw(QPainter *painter)
     }
 }
 
-void QcDegreesItem::setStep(float step)
+void QcDegreesItem::setStep(qreal step)
 {
     mStep = step;
     update();
@@ -742,12 +843,12 @@ void QcDegreesItem::setSubDegree(bool b)
     update();
 }
 
-void QcDegreesItem::setLength(float length){
+void QcDegreesItem::setLength(qreal length){
     mLength = length;
     update();
 }
 
-void QcDegreesItem::setWidth(float width){
+void QcDegreesItem::setWidth(qreal width){
     if(mWidth > 1){
         mWidth = 0.04;
     }
@@ -761,7 +862,6 @@ void QcDegreesItem::setWidth(float width){
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -770,6 +870,7 @@ QcNeedleItem::QcNeedleItem(QObject *parent) :
     QcScaleItem(parent)
 {
     mCurrentValue = 0;
+    mPrecision = 2;
     mColor = Qt::black;
     mLabel = NULL;
     mNeedleType = FeatherNeedle;
@@ -781,7 +882,7 @@ void QcNeedleItem::draw(QPainter *painter)
     QRectF tmpRect = adjustRect(position());
     painter->save();
     painter->translate(tmpRect.center());
-    float deg = getDegFromValue( mCurrentValue);
+    qreal deg = getDegFromValue( mCurrentValue);
     painter->rotate(deg+90.0);
     painter->setBrush(QBrush(mColor));
     painter->setPen(Qt::NoPen);
@@ -818,7 +919,7 @@ void QcNeedleItem::draw(QPainter *painter)
     painter->restore();
 }
 
-void QcNeedleItem::setCurrentValue(float value) //takes actual number values (NOT PERCENTAGES)
+void QcNeedleItem::setCurrentValue(qreal value) //takes actual number values (NOT PERCENTAGES)
 {
        if(value<mMinValue)
         mCurrentValue = mMinValue;
@@ -827,16 +928,26 @@ void QcNeedleItem::setCurrentValue(float value) //takes actual number values (NO
     else
         mCurrentValue = value;
 
+
     if(mLabel!=0){
-        if (mCurrentValue>1){
-            mLabel->setText(QString::number((int) mCurrentValue));
+        QString tempTxt;
+        if (mCurrentValue > qPow(10,mPrecision)){
+            tempTxt = QString::number(static_cast<int>(mCurrentValue));
+            mLabel->setText(tempTxt,false);
         }
-        else{
-        QString tempTxt = QString::number(mCurrentValue);
-        tempTxt.truncate(4);
-        mLabel->setText(tempTxt,false);
+        else if (mCurrentValue > 1){
+            tempTxt = QString::number(static_cast<qreal>(static_cast<int>(qPow(10,mPrecision - floor(qLn(mCurrentValue)/qLn(10)))*mCurrentValue))/qPow(10,mPrecision - floor(qLn(mCurrentValue)/qLn(10))));
+
+            mLabel->setText(tempTxt,false);
+        }
+        else {
+            tempTxt = QString::number(static_cast<qreal>(static_cast<int>(qPow(10,mPrecision)*mCurrentValue))/qPow(10,mPrecision));
+            mLabel->setText(tempTxt,false);
+        }
+
         tempTxt.clear();
-        }
+
+
     }
 /// This pull request is not working properly
 //    if(mLabel!=0){
@@ -848,7 +959,12 @@ void QcNeedleItem::setCurrentValue(float value) //takes actual number values (NO
     update();
 }
 
-float QcNeedleItem::currentValue()
+void QcNeedleItem::setPrecision(qreal value){
+    mPrecision = value;
+    update();
+}
+
+qreal QcNeedleItem::currentValue()
 {
     return mCurrentValue;
 }
@@ -892,7 +1008,7 @@ void QcNeedleItem::setNeedle(QcNeedleItem::NeedleType needleType)
 }
 
 
-void QcNeedleItem::createDiamonNeedle(float r)
+void QcNeedleItem::createDiamonNeedle(qreal r)
 {
     QVector<QPointF> tmpPoints;
     tmpPoints.append(QPointF(0.0, 0.0));
@@ -902,7 +1018,7 @@ void QcNeedleItem::createDiamonNeedle(float r)
     mNeedlePoly = tmpPoints;
 }
 
-void QcNeedleItem::createTriangleNeedle(float r)
+void QcNeedleItem::createTriangleNeedle(qreal r)
 {
     QVector<QPointF> tmpPoints;
     tmpPoints.append(QPointF(0.0, r));
@@ -911,7 +1027,7 @@ void QcNeedleItem::createTriangleNeedle(float r)
     mNeedlePoly = tmpPoints;
 }
 
-void QcNeedleItem::createFeatherNeedle(float r)
+void QcNeedleItem::createFeatherNeedle(qreal r)
 {
     QVector<QPointF> tmpPoints;
     tmpPoints.append(QPointF(0.0, r));
@@ -922,7 +1038,7 @@ void QcNeedleItem::createFeatherNeedle(float r)
     mNeedlePoly = tmpPoints;
 }
 
-void QcNeedleItem::createAttitudeNeedle(float r)
+void QcNeedleItem::createAttitudeNeedle(qreal r)
 {
     QVector<QPointF> tmpPoints;
     tmpPoints.append(QPointF(0.0, r));
@@ -931,7 +1047,7 @@ void QcNeedleItem::createAttitudeNeedle(float r)
     mNeedlePoly = tmpPoints;
 }
 
-void QcNeedleItem::createCompassNeedle(float r)
+void QcNeedleItem::createCompassNeedle(qreal r)
 {
     QVector<QPointF> tmpPoints;
     tmpPoints.append(QPointF(0.0, r));
@@ -964,15 +1080,15 @@ QcValuesItem::QcValuesItem(QObject *parent) :
 void QcValuesItem::draw(QPainter*painter)
 {
     QRectF  tmpRect = resetRect();
-    float r = getRadius(adjustRect(99));
+    qreal r = getRadius(adjustRect(99));
     QFont font(mfont,0);
     font.setPointSizeF(mFontSize*r);
 
     painter->setFont(font);
     painter->setPen(mColor);
     if (not mDynamic){
-    for(float val = mMinValue;val<=mMaxValue;val+=mStep){
-        float deg = getDegFromValue(val);
+    for(qreal val = mMinValue;val<=mMaxValue;val+=mStep){
+        qreal deg = getDegFromValue(val);
         QPointF pt = getPoint(deg,tmpRect);
         QPainterPath path;
         path.moveTo(pt);
@@ -990,8 +1106,8 @@ void QcValuesItem::draw(QPainter*painter)
 
     else{
         painter->setPen(mColorLit);
-        for(float val = mMinValue;val<=mCurrentValue+0.0001;val+=mStep){
-            float deg = getDegFromValue(val);
+        for(qreal val = mMinValue;val<=mCurrentValue+0.0001;val+=mStep){
+            qreal deg = getDegFromValue(val);
             QPointF pt = getPoint(deg,tmpRect);
             QPainterPath path;
             path.moveTo(pt);
@@ -1006,11 +1122,11 @@ void QcValuesItem::draw(QPainter*painter)
             painter->drawText( txtRect, Qt::TextSingleLine, strVal );
         }
         painter->setPen(mColorUnlit);
-        float newStartValue = ((float)((int) (100*mCurrentValue))/100) + (mStep - (float)((int) (100*(mCurrentValue)) % (int) (100*mStep))/100);
+        qreal newStartValue = (static_cast<qreal>(static_cast<int>(100*mCurrentValue))/100) + (mStep - static_cast<qreal>(static_cast<int>(100*(mCurrentValue)) % static_cast<int>(100*mStep))/100);
 
-        for(float val = newStartValue;val<=mMaxValue+0.001;val+=mStep){
+        for(qreal val = newStartValue;val<=mMaxValue+0.001;val+=mStep){
 
-            float deg = getDegFromValue(val);
+            qreal deg = getDegFromValue(val);
             QPointF pt = getPoint(deg,tmpRect);
             QPainterPath path;
             path.moveTo(pt);
@@ -1029,7 +1145,7 @@ void QcValuesItem::draw(QPainter*painter)
     }
 }
 
-void QcValuesItem::setStep(float step)
+void QcValuesItem::setStep(qreal step)
 {
     mStep = step;
 }
@@ -1043,7 +1159,7 @@ void QcValuesItem::setColor(const QColor& color)
 void QcValuesItem::setFont(QString font){
     mfont = font;
 }
-void QcValuesItem::setFontSize(float value){
+void QcValuesItem::setFontSize(qreal value){
     if (value > 1){
         mFontSize = 1;
     }
@@ -1071,7 +1187,7 @@ void QcValuesItem::setColorUnlit(const QColor &color){
     mColorUnlit = color;
     update();
 }
-void QcValuesItem::setCurrentValue(float value){ //takes actual number values (NOT PERCENTAGES)
+void QcValuesItem::setCurrentValue(qreal value){ //takes actual number values (NOT PERCENTAGES)
     if (value > mMaxValue){
         mCurrentValue = mMaxValue;
     }
@@ -1096,31 +1212,31 @@ QcAttitudeMeter::QcAttitudeMeter(QObject *parent) :
     mRoll = 0;
 }
 
-void QcAttitudeMeter::setCurrentPitch(float pitch)
+void QcAttitudeMeter::setCurrentPitch(qreal pitch)
 {
     mPitch=-pitch;
     update();
 }
 
-void QcAttitudeMeter::setCurrentRoll(float roll)
+void QcAttitudeMeter::setCurrentRoll(qreal roll)
 {
     mRoll = roll;
     update();
 }
 
-QPointF QcAttitudeMeter::getIntersection(float r, const QPointF &pitchPoint, const QPointF &pt)
+QPointF QcAttitudeMeter::getIntersection(qreal r, const QPointF &pitchPoint, const QPointF &pt)
 {
     // refrence it to zero
 
     Q_UNUSED(r)
-    float a = (pitchPoint.y()-pt.y())/(pitchPoint.x()-pt.x());
-    float b = pt.y()-a*pt.x();
+    qreal a = (pitchPoint.y()-pt.y())/(pitchPoint.x()-pt.x());
+    qreal b = pt.y()-a*pt.x();
     return QPointF(0,a*0+b);
 }
 
-float QcAttitudeMeter::getStartAngle(const QRectF& tmpRect)
+qreal QcAttitudeMeter::getStartAngle(const QRectF& tmpRect)
 {
-    float r = getRadius(tmpRect);
+    qreal r = getRadius(tmpRect);
     QPointF pt1 = getPoint(mRoll,tmpRect);
     pt1.setY(pt1.y()-mPitchOffset);
     QPointF pitchPoint = QPointF(tmpRect.center().x(),tmpRect.center().y()-mPitchOffset);
@@ -1143,7 +1259,7 @@ void QcAttitudeMeter::draw(QPainter *painter)
 {
     resetRect();
     QRectF tmpRect = adjustRect(position());
-    float r = getRadius(tmpRect);
+    qreal r = getRadius(tmpRect);
     if(mPitch<0)
         mPitchOffset = 0.0135*r*mPitch;
     else
@@ -1166,7 +1282,7 @@ void QcAttitudeMeter::drawDegrees(QPainter *painter)
 {
     resetRect();
     QRectF tmpRect = adjustRect(position());
-    float r = getRadius(tmpRect);
+    qreal r = getRadius(tmpRect);
     QPen pen;
 
     pen.setColor(Qt::white);
@@ -1187,7 +1303,7 @@ void QcAttitudeMeter::drawDegrees(QPainter *painter)
 }
 
 
-void QcAttitudeMeter::drawDegree(QPainter * painter, const QRectF& tmpRect,float deg)
+void QcAttitudeMeter::drawDegree(QPainter * painter, const QRectF& tmpRect,qreal deg)
 {
     QPointF pt1 = getPoint(deg,tmpRect);
     QPointF pt2 = tmpRect.center();
@@ -1211,10 +1327,10 @@ void QcAttitudeMeter::drawUpperEllipse(QPainter *painter, const QRectF &tmpRect)
     radialGrad1.setColorAt(.8, clr2);
 
 
-    float offset = getStartAngle(tmpRect);
-    float startAngle = 180-offset;
-    float endAngle = offset-2*mRoll;
-    float span =endAngle-startAngle;
+    qreal offset = getStartAngle(tmpRect);
+    qreal startAngle = 180-offset;
+    qreal endAngle = offset-2*mRoll;
+    qreal span =endAngle-startAngle;
 
     painter->setBrush(radialGrad1);
     painter->drawChord(tmpRect,16*startAngle,16*span);
@@ -1230,10 +1346,10 @@ void QcAttitudeMeter::drawLowerEllipse(QPainter *painter, const QRectF &tmpRect)
     radialGrad2.setColorAt(0, clr1);
     radialGrad2.setColorAt(.8, clr2);
 
-    float offset = getStartAngle(tmpRect);
-    float startAngle = 180+offset;
-    float endAngle = offset-2*mRoll;
-    float span =endAngle+startAngle;
+    qreal offset = getStartAngle(tmpRect);
+    qreal startAngle = 180+offset;
+    qreal endAngle = offset-2*mRoll;
+    qreal span =endAngle+startAngle;
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(radialGrad2);
@@ -1243,7 +1359,7 @@ void QcAttitudeMeter::drawLowerEllipse(QPainter *painter, const QRectF &tmpRect)
 
 void QcAttitudeMeter::drawPitchSteps(QPainter *painter, const QRectF &tmpRect)
 {
-    float r = getRadius(tmpRect);
+    qreal r = getRadius(tmpRect);
     QPointF center = tmpRect.center();
     painter->save();
     painter->translate(center.x(),center.y()-mPitchOffset);
@@ -1285,7 +1401,7 @@ void QcAttitudeMeter::drawPitchSteps(QPainter *painter, const QRectF &tmpRect)
 void QcAttitudeMeter::drawHandle(QPainter *painter)
 {
     QRectF tmpRct = adjustRect(15);
-    float r = getRadius(tmpRct);
+    qreal r = getRadius(tmpRct);
     QPen pen;
     pen.setColor(Qt::gray);
     pen.setWidthF(0.25*r);

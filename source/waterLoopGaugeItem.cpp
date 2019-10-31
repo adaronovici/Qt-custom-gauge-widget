@@ -7,7 +7,7 @@ waterLoopGaugeItem::waterLoopGaugeItem()
 
 }
 
-waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString label,QString units ,double maxValue, double warningValueHigh, double warningValueMed, double stepSize){
+waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString label,QString units ,qreal precision, qreal maxValue, qreal warningValueHigh, qreal warningValueMed, qreal stepSize){
     mainGauge = new QcGaugeWidget;
     this->maxValue = maxValue;
     this->stepSize = stepSize;
@@ -26,6 +26,7 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     QcArcItem * arc =  mainGauge->addArc(theme.arcRadius);
     arc->setWidth(theme.arcWidth);
     arc->setColor(theme.mainColor);
+    arc->setDegreeRange(theme.minDegree,theme.maxDegree);
 
     QcDegreesItem * majDeg = mainGauge->addDegrees(theme.subDegreesRadius);
     majDeg->setStep(stepSize);
@@ -33,6 +34,7 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     majDeg->setColor(theme.mainColor);
     majDeg->setWidth(theme.mainDegreesWidth);
     majDeg->setLength(theme.mainDegreesLength);
+    majDeg->setDegreeRange(theme.minDegree,theme.maxDegree);
 
     QcDegreesItem * deg = mainGauge->addDegrees(theme.subDegreesRadius);
     deg->setStep(stepSize/10.0);
@@ -40,11 +42,12 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     deg->setWidth(theme.subDegreesWidth);
     deg->setLength(theme.subDegreesLength);
     deg->setColor(theme.mainColor);
+    deg->setDegreeRange(theme.minDegree,theme.maxDegree);
 
     QColor tmpColor;
 
-    QPair<QColor,float> pair;
-    QList<QPair<QColor,float>> lst;
+    QPair<QColor,qreal> pair;
+    QList<QPair<QColor,qreal>> lst;
 
     pair.first = QColor(theme.noWarningColor);
     pair.second = 100* warningValueMed/maxValue;
@@ -61,18 +64,21 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     QcColorBand * cb = mainGauge->addColorBand(theme.colorBandRadius);
     cb->setWidth(theme.colorBandWidth);
     cb->setColors(lst);
+    cb->setDegreeRange(theme.minDegree,theme.maxDegree);
 
     mDynamicColorBand = mainGauge->addColorBand(theme.colorBandRadius);
     mDynamicColorBand->setWidth(theme.colorBandWidth + 0.01);
     mDynamicColorBand->setDynamic(true);
     mDynamicColorBand->setCoveringColor(theme.backgroundColor);
     mDynamicColorBand->setOpacity(0.75);
+    mDynamicColorBand->setDegreeRange(theme.minDegree,theme.maxDegree);
 
     mDynamicColorBandDegrees = mainGauge->addColorBand(theme.mainDegreesRadius - 2);
     mDynamicColorBandDegrees->setWidth(theme.colorBandWidth);
     mDynamicColorBandDegrees->setDynamic(true);
     mDynamicColorBandDegrees->setCoveringColor(theme.backgroundColor);
     mDynamicColorBandDegrees->setOpacity(0.5);
+    mDynamicColorBandDegrees->setDegreeRange(theme.minDegree,theme.maxDegree);
 
 
     lightUpValues = mainGauge->addValues(theme.valuesRadius);
@@ -83,11 +89,18 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     lightUpValues->setStep(stepSize);
     lightUpValues->setColorLit(theme.mainColor);
     lightUpValues->setColorUnlit(theme.mainColor.darker());
+    lightUpValues->setDegreeRange(theme.minDegree,theme.maxDegree);
 
     mSpeedNeedle = mainGauge->addNeedle(theme.needleRadius);
 
-    mSpeedNeedle->setColor(theme.mainColor);
+    if (theme.needleVisible){
+        mSpeedNeedle->setColor(theme.mainColor);
+    }
+    else{
+        mSpeedNeedle->setColor(Qt::transparent);
+    }
     mSpeedNeedle->setValueRange(0,maxValue);
+    mSpeedNeedle->setDegreeRange(theme.minDegree, theme.maxDegree);
     needleCover = mainGauge->addBackground(theme.needleCoverRadius);
     needleCover->clearrColors();
     needleCover->addColor(1.0, theme.backgroundColor);
@@ -100,6 +113,7 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     lab->setFontSize(theme.fontSizeNeedleLabel);
     lab->setColor(theme.mainColor);
     mSpeedNeedle->setLabel(lab);
+    mSpeedNeedle->setPrecision(precision);
 
     QcLabelItem * kmh = mainGauge->addLabel(25);
     kmh->setText(units);
@@ -112,18 +126,26 @@ waterLoopGaugeItem::waterLoopGaugeItem(QcThemeItem &theme, QString type, QString
     descriptor->setFont(theme.font);
     descriptor->setColor(theme.mainColor);
     descriptor->setFontSize(theme.fontSizeLabel);
+
+    if (theme.dropShadow){
+        dropShadow = new QGraphicsDropShadowEffect(mainGauge);
+        dropShadow->setBlurRadius(theme.dropShadowRadius);
+        dropShadow->setColor(theme.dropShadowColor);
+        dropShadow->setOffset(QPointF(theme.dropShadowHorOffset,theme.dropShadowVertOffset));
+        mainGauge->setGraphicsEffect(dropShadow);
+    }
 }
 
 QcGaugeWidget * waterLoopGaugeItem::getGauge(){
     return this->mainGauge;
 }
 
-void waterLoopGaugeItem::setCurrentValue(double value){
-    mSpeedNeedle->setCurrentValue(((float) value / 99 * maxValue)); //needs actual value
-    mDynamicColorBand->setCurrentValue( ((float) value / 99 *100)); //needs percentages
-    mDynamicColorBandDegrees->setCurrentValue( ((float) value / 99 *100));
-    mainBackground->setCurrentValue(((float) value / 99 * maxValue));
-    needleCover->setCurrentValue(((float) value / 99 * maxValue));
-    lightUpValues->setCurrentValue(((float) value / 99 * maxValue));
+void waterLoopGaugeItem::setCurrentValue(qreal value){
+    mSpeedNeedle->setCurrentValue(((qreal) value / 99 * maxValue)); //needs actual value
+    mDynamicColorBand->setCurrentValue( ((qreal) value / 99 *100)); //needs percentages
+    mDynamicColorBandDegrees->setCurrentValue( ((qreal) value / 99 *100));
+    mainBackground->setCurrentValue(((qreal) value / 99 * maxValue));
+    needleCover->setCurrentValue(((qreal) value / 99 * maxValue));
+    lightUpValues->setCurrentValue(((qreal) value / 99 * maxValue));
 
 }

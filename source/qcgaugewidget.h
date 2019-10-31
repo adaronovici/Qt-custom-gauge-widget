@@ -50,10 +50,12 @@ class QcDegreesItem;
 class QcValuesItem;
 class QcArcItem;
 class QcColorBand;
+class QcDynamicArcItem;
 class QcNeedleItem;
 class QcLabelItem;
 class QcGlassItem;
 class QcAttitudeMeter;
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -63,18 +65,19 @@ class QCGAUGE_DECL QcGaugeWidget : public QWidget
 public:
     explicit QcGaugeWidget(QWidget *parent = 0);    
 
-    QcBackgroundItem* addBackground(float position);
-    QcDegreesItem* addDegrees(float position);
-    QcValuesItem* addValues(float position);
-    QcArcItem* addArc(float position);
-    QcColorBand* addColorBand(float position);
-    QcNeedleItem* addNeedle(float position);
-    QcLabelItem* addLabel(float position);
-    QcGlassItem* addGlass(float position);
-    QcAttitudeMeter* addAttitudeMeter(float position);
+    QcBackgroundItem* addBackground(qreal position);
+    QcDegreesItem* addDegrees(qreal position);
+    QcValuesItem* addValues(qreal position);
+    QcArcItem* addArc(qreal position);
+    QcColorBand* addColorBand(qreal position);
+    QcDynamicArcItem* addDynamicArc(qreal position);
+    QcNeedleItem* addNeedle(qreal position);
+    QcLabelItem* addLabel(qreal position);
+    QcGlassItem* addGlass(qreal position);
+    QcAttitudeMeter* addAttitudeMeter(qreal position);
 
 
-    void addItem(QcItem* item, float position);
+    void addItem(QcItem* item, qreal position);
     int removeItem(QcItem* item);
     QList <QcItem*> items();
     QList <QcItem*> mItems;
@@ -99,24 +102,24 @@ public:
     virtual void draw(QPainter *) = 0;
     virtual int type();
 
-    void setPosition(float percentage);
-    float position();
+    void setPosition(qreal percentage);
+    qreal position();
     QRectF rect();
     enum Error{InvalidValueRange,InvalidDegreeRange,InvalidStep};
 
 
 protected:
-    QRectF adjustRect(float percentage);
-    float getRadius(const QRectF &);
-    float getAngle(const QPointF&, const QRectF &tmpRect);
-    QPointF getPoint(float deg, const QRectF &tmpRect);
+    QRectF adjustRect(qreal percentage);
+    qreal getRadius(const QRectF &);
+    qreal getAngle(const QPointF&, const QRectF &tmpRect);
+    QPointF getPoint(qreal deg, const QRectF &tmpRect);
     QRectF resetRect();
     void update();
 
 private:
     QRectF mRect;
     QWidget *parentWidget;
-    float mPosition;
+    qreal mPosition;
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -128,24 +131,27 @@ class QCGAUGE_DECL QcScaleItem : public QcItem
 public:
     explicit QcScaleItem(QObject *parent = 0);
 
-    void setValueRange(float minValue,float maxValue);
-    void setDgereeRange(float minDegree,float maxDegree);
-    void setMinValue(float minValue);
-    void setMaxValue(float maxValue);
-    void setMinDegree(float minDegree);
-    void setMaxDegree(float maxDegree);
+    void setValueRange(qreal minValue,qreal maxValue);
+    void setDegreeRange(qreal minDegree,qreal maxDegree);
+    void setMinValue(qreal minValue);
+    void setMaxValue(qreal maxValue);
+    void setMinDegree(qreal minDegree);
+    void setMaxDegree(qreal maxDegree);
+    qreal mMinDegree;
+    qreal mMaxDegree;
 
 signals:
 
 public slots:
+
+
 protected:
 
-    float getDegFromValue(float);
+    qreal getDegFromValue(qreal);
 
-    float mMinValue;
-    float mMaxValue;
-    float mMinDegree;
-    float mMaxDegree;
+    qreal mMinValue;
+    qreal mMaxValue;
+
 
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -158,21 +164,21 @@ class QCGAUGE_DECL QcBackgroundItem : public QcItem
 public:
     explicit QcBackgroundItem(QObject *parent = 0);
     void draw(QPainter*);
-    void addColor(float position, const QColor& color);
+    void addColor(qreal position, const QColor& color);
     void clearrColors();
     void setDynamic(bool b);
     void setDynamicColors(const QColor &regColor, const QColor &warnColor);
-    void setWarningValue(float value);
-    void setCurrentValue(float value);
+    void setWarningValue(qreal value);
+    void setCurrentValue(qreal value);
 
 
 private:
     QPen mPen;
-    QList<QPair<float,QColor> > mColors;
+    QList<QPair<qreal,QColor> > mColors;
     QLinearGradient mLinearGrad;
     bool mDynamic;
-    float mWarningValue;
-    float mCurrentValue;
+    qreal mWarningValue;
+    qreal mCurrentValue;
     QColor mWarningColorFill;
     QColor mRegularColorFill;
 
@@ -202,18 +208,18 @@ class QCGAUGE_DECL QcLabelItem : public QcItem
 public:
     explicit QcLabelItem(QObject *parent = 0);
     virtual void draw(QPainter *);
-    void setAngle(float);
-    float angle();
+    void setAngle(qreal);
+    qreal angle();
     void setText(const QString &text, bool repaint = true);
     QString text();
     void setColor(const QColor& color);
     QColor color();
     void setFont(QString str);
-    void setFontSize(float size);
+    void setFontSize(qreal size);
 
 private:
-    float mAngle;
-    float mFontSize;//based on a percentage of the radius
+    qreal mAngle;
+    qreal mFontSize;//based on a percentage of the radius
     QString mFont;
     QString mText;
     QColor mColor;
@@ -230,11 +236,12 @@ public:
     explicit QcArcItem(QObject *parent = 0);
     void draw(QPainter*);
     void setColor(const QColor& color);
-    void setWidth(float width);
+    void setWidth(qreal width);
+
 
 private:
     QColor mColor;
-    float mWidth;
+    qreal mWidth;
 
 signals:
 
@@ -246,29 +253,71 @@ public slots:
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+class QCGAUGE_DECL QcDynamicArcItem : public QcScaleItem
+{
+    Q_OBJECT
+public:
+    explicit QcDynamicArcItem(QObject *parent = nullptr);
+    void draw(QPainter*);
+    void setColor(const QColor& color);
+
+    /**
+     * @brief setColor set multiple colors to transition colors at different percentages
+     * @param colors
+     */
+    void setColor(std::vector<std::pair<qreal, QColor>> colors);
+    /**
+     * @brief setWidth Set the relative width of the arc
+     * @param width
+     */
+    void setWidth(const qreal& width);
+    /**
+     * @brief setPercentage sets the value of the arc
+     * @param percent qreal between 0.0 and 1.0
+     */
+    void setPercentage(const qreal &percent);
+
+
+
+private:
+    QColor mColor;
+    std::vector<std::pair<qreal, QColor>> mColors;
+    bool usingSingleColor;
+    qreal mWidth;
+    qreal mPercentage;
+
+
+    QColor calculateColor(qreal percentage);
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
 class QCGAUGE_DECL QcColorBand : public QcScaleItem
 {
     Q_OBJECT
 public:
     explicit QcColorBand(QObject *parent = 0);
     void draw(QPainter*);
-    void setColors(const QList<QPair<QColor,float> >& colors);
-    void setWidth(float width);
+    void setColors(const QList<QPair<QColor,qreal> >& colors);
+    void setWidth(qreal width);
     void setDynamic(bool b);
-    void setCurrentValue(float value);
-    void setOpacity(float value); //from 0 to 1
+    void setCurrentValue(qreal value);
+    void setOpacity(qreal value); //from 0 to 1
     void setCoveringColor(QColor c);
 
 
 private:
-   QPainterPath createSubBand(float from,float sweep);
-   QList<QPair<QColor,float> > mBandColors;
-   float mBandStartValue;
-   float mBandWidth; //percentage of the radius
-   float mOpacity; //only for when dynamic, sets opacity of covering color
+   QPainterPath createSubBand(qreal from,qreal sweep);
+   QList<QPair<QColor,qreal> > mBandColors;
+   qreal mBandStartValue;
+   qreal mBandWidth; //percentage of the radius
+   qreal mOpacity; //only for when dynamic, sets opacity of covering color
    QColor mCoveringColor; //sets the color which will cover the other color band
    bool mdynamic;
-   float mCurrentValue; //percentage (from 0 to 100) of the gauge
+   qreal mCurrentValue; //percentage (from 0 to 100) of the gauge
 
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -280,17 +329,19 @@ class QCGAUGE_DECL QcDegreesItem : public QcScaleItem
 public:
     explicit QcDegreesItem(QObject *parent = 0);
     void draw(QPainter *painter);
-    void setStep(float step);
+    void setStep(qreal step);
     void setColor(const QColor& color);
     void setSubDegree(bool );
-    void setLength(float length); //length is a percentage of distance from the outer radius of the degrees to the center
-    void setWidth(float width); //takes width as percentage of radius
+    void setLength(qreal length); //length is a percentage of distance from the outer radius of the degrees to the center
+    void setWidth(qreal width); //takes width as percentage of radius
+
 private:
-    float mStep;
+    qreal mStep;
     QColor mColor;
     bool mSubDegree;
-    float mLength; //length is a percentage of distance from the outer radius of the degrees to the center
-    float mWidth; //width of each individual degree (given as a percentage of the circle radius)
+
+    qreal mLength; //length is a percentage of distance from the outer radius of the degrees to the center
+    qreal mWidth; //width of each individual degree (given as a percentage of the circle radius)
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -302,8 +353,8 @@ class QCGAUGE_DECL QcNeedleItem : public QcScaleItem
 public:
     explicit QcNeedleItem(QObject *parent = 0);
     void draw(QPainter*);
-    void setCurrentValue(float value);
-    float currentValue();
+    void setCurrentValue(qreal value);
+    qreal currentValue();
     void setValueFormat(QString format);
     QString currentValueFormat();
     void setColor(const QColor & color);
@@ -311,22 +362,23 @@ public:
 
     void setLabel(QcLabelItem*);
     QcLabelItem * label();
-
+    void setPrecision(qreal value);
     enum NeedleType{DiamonNeedle,TriangleNeedle,FeatherNeedle,AttitudeMeterNeedle,CompassNeedle};//#
 
     void setNeedle(QcNeedleItem::NeedleType needleType);
 private:
     QPolygonF mNeedlePoly;
-    float mCurrentValue;
+    qreal mCurrentValue;
     QColor mColor;
-    void createDiamonNeedle(float r);
-    void createTriangleNeedle(float r);
-    void createFeatherNeedle(float r);
-    void createAttitudeNeedle(float r);
-    void createCompassNeedle(float r);
+    void createDiamonNeedle(qreal r);
+    void createTriangleNeedle(qreal r);
+    void createFeatherNeedle(qreal r);
+    void createAttitudeNeedle(qreal r);
+    void createCompassNeedle(qreal r);
     NeedleType mNeedleType;
     QcLabelItem *mLabel;
     QString mFormat;
+    qreal mPrecision;
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -339,23 +391,25 @@ class QCGAUGE_DECL QcValuesItem : public QcScaleItem
 public:
     explicit QcValuesItem(QObject *parent = 0);
     void draw(QPainter*);
-    void setStep(float step);
+    void setStep(qreal step);
     void setColor(const QColor& color);
     void setFont(QString font);
-    void setFontSize(float value);
+    void setFontSize(qreal value);
     void setDynamic(bool b);
     void setColorUnlit(const QColor& color);
     void setColorLit(const QColor& color);
-    void setCurrentValue(float value);
+    void setCurrentValue(qreal value);
+
 private:
     QString mfont;
-    float mFontSize; //given as a value from 0 to 1 which represents percentage of radius
-    float mStep;
+    qreal mFontSize; //given as a value from 0 to 1 which represents percentage of radius
+    qreal mStep;
     QColor mColor;
+
     bool mDynamic;
     QColor mColorUnlit;
     QColor mColorLit;
-    float mCurrentValue;
+    qreal mCurrentValue;
 
 };
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -369,26 +423,26 @@ public:
     explicit QcAttitudeMeter(QObject *parent = 0);
 
     void draw(QPainter *);
-    void setCurrentPitch(float pitch);
-    void setCurrentRoll(float roll);
+    void setCurrentPitch(qreal pitch);
+    void setCurrentRoll(qreal roll);
 private:
-    float mRoll;
-    float mPitch;
-    float mPitchOffset;
+    qreal mRoll;
+    qreal mPitch;
+    qreal mPitchOffset;
 
     QPolygonF mHandlePoly;
     QPainterPath mStepsPath;
 
-    QPointF getIntersection(float r,const QPointF& pitchPoint,const QPointF& pt);
-    float getStartAngle(const QRectF& tmpRect);
+    QPointF getIntersection(qreal r,const QPointF& pitchPoint,const QPointF& pt);
+    qreal getStartAngle(const QRectF& tmpRect);
 
     void drawDegrees(QPainter *);
-    void drawDegree(QPainter * painter, const QRectF& tmpRect,float deg);
+    void drawDegree(QPainter * painter, const QRectF& tmpRect,qreal deg);
     void drawUpperEllipse(QPainter *,const QRectF&);
     void drawLowerEllipse(QPainter *,const QRectF&);
     void drawPitchSteps(QPainter *,const QRectF&);
     void drawHandle(QPainter *);
-    void drawSteps(QPainter *,float);
+    void drawSteps(QPainter *,qreal);
 
 };
 

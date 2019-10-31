@@ -3,15 +3,16 @@
 
 #include "qcgaugewidget.h"
 #include "qcthemeitem.h"
+#include <QGraphicsDropShadowEffect>
 
 
 class waterLoopGaugeItem : public QcGaugeWidget
 {
 public:
     waterLoopGaugeItem();
-    waterLoopGaugeItem(QcThemeItem &theme, QString type, QString label, QString units, double maxValue, double warningValueHigh, double warningValueMed, double stepSize);
+    waterLoopGaugeItem(QcThemeItem &theme, QString type, QString label, QString units,qreal precision, qreal maxValue, qreal warningValueHigh, qreal warningValueMed, qreal stepSize);
     QcGaugeWidget * getGauge();
-    void setCurrentValue(double value);
+    void setCurrentValue(qreal value);
 
 private:
     QcGaugeWidget * mainGauge;
@@ -21,13 +22,14 @@ private:
     QcValuesItem * lightUpValues;
     QcBackgroundItem * mainBackground;
     QcBackgroundItem * needleCover;
+    QGraphicsDropShadowEffect * dropShadow;
     QString type;
     QString label;
     QString units;
-    double maxValue;
-    double warningValueHigh;
-    double warningValueMed;
-    double stepSize;
+    qreal maxValue;
+    qreal warningValueHigh;
+    qreal warningValueMed;
+    qreal stepSize;
 
 
 
